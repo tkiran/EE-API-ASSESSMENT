@@ -24,10 +24,10 @@ posts = [
 
  
 # Views
-async def user_posts(request: Request):
+async def get_user_posts(request: Request):
     user_id = request.query_params.get('user_id')
     if user_id:
         result  = [post for post in posts if post['user_id'] == int(user_id)]
     else:
         result = posts
-    return JSONResponse(content={"data": result})
+    return JSONResponse(content=result)
