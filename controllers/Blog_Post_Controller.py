@@ -1,7 +1,7 @@
-import json
 from starlette.responses import JSONResponse
 from starlette.requests import Request
 from starlette.authentication import requires
+from starlette.exceptions import HTTPException
 from typing import List
 from data.blog_post_data import BlogPostDataProvider
 
@@ -16,10 +16,17 @@ async def get_user_posts(request: Request):
     Returns:
         _type_: This return jsonresponse for blog post data given user id or response for all users if user id not passed
     """
-    user_id = request.query_params.get('user_id')
-    serialized_posts =BlogPostDataProvider.seed_blog_posts()
-    if user_id:
-        blogResults =  [post for post in serialized_posts if post["user_id"] == int(user_id)]
-    else:
-        blogResults = serialized_posts
-    return JSONResponse(content=blogResults)
+    try:
+        user_id = request.query_params.get('user_id')
+        serialized_posts =BlogPostDataProvider.seed_blog_posts()
+        if user_id:
+            blogResults =  [post for post in serialized_posts if post["user_id"] == int(user_id)]
+        else:
+            blogResults = serialized_posts
+        return JSONResponse(content=blogResults)
+    except HTTPException as e:
+        # Handle HTTP errors such as 4xx or 5xx status codes
+        return JSONResponse({"error": str(e.detail)}, status_code=e.status_code)
+    except Exception as e:
+        # Handle other types of exceptions
+        return JSONResponse({"error": str(e)}, status_code=500)
