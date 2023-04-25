@@ -2,3 +2,5 @@ starlette
 uvicorn
 sqlalchemy
 pytest
+pytest-html
+pytest-cov
