@@ -21,8 +21,11 @@ async def get_user_posts(request: Request):
         serialized_posts =BlogPostDataProvider.seed_blog_posts()
         if user_id:
             blogResults =  [post for post in serialized_posts if post["user_id"] == int(user_id)]
+            if blogResults == []:
+                blogResults = "Record not found"
+
         else:
-            blogResults = serialized_posts
+            blogResults = "Record not found"
         return JSONResponse(content=blogResults)
     except HTTPException as e:
         # Handle HTTP errors such as 4xx or 5xx status codes
